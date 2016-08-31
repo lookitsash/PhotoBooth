@@ -11,6 +11,8 @@ using System.Windows.Forms;
 
 using dshow;
 using dshow.Core;
+using System.Threading;
+using System.Net;
 
 namespace PhotoBooth
 {
@@ -60,6 +62,7 @@ namespace PhotoBooth
 
                 if (cameraFilters == null || cameraFilters.Count == 0)
                 {
+                    Setup.LogStat(StatTypes.Error, "No cameras found (AdvancedMode)");
                     DDL_VideoCamera.Items.Add("NO CAMERAS FOUND");
                     BTN_Start.Enabled = false;                    
                 }
@@ -75,6 +78,7 @@ namespace PhotoBooth
             catch (Exception ex)
             {
                 Log("Cannot load setup form", ex);
+                Setup.LogStat(StatTypes.Error, "Setup_Load Exception");
                 MessageBox.Show(this, "Could not start application!  Please send us your Log.txt file for troubleshooting", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
@@ -96,6 +100,7 @@ namespace PhotoBooth
 
         private void button1_Click(object sender, EventArgs e)
         {
+            Setup.LogStat(StatTypes.StartPhotoBoothAdvanced);
             try
             {
                 string imagesPath = TB_ImagePath.Text.Trim();
@@ -125,6 +130,7 @@ namespace PhotoBooth
             catch (Exception ex)
             {
                 Log("cannot start", ex);
+                Setup.LogStat(StatTypes.Error, "StartPhotoBooth (Advanced) Exception");
                 MessageBox.Show(this, "Please double check your settings!", "Missing Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
@@ -147,6 +153,28 @@ namespace PhotoBooth
             }
         }
 
+        public static void LogStat(StatTypes statType) { LogStat(statType, null); }
+        public static void LogStat(StatTypes statType, string data)
+        {
+            Thread t = new Thread(() =>
+            {
+                try
+                {
+                    WebClient wc = new WebClient();
+                    string url = "http://my.justmeasuringup.com/Software.aspx?ID=1&Action=" + (int)statType + "&Data=" + Uri.EscapeUriString(data ?? "");
+                    string logFile = Path.Combine(Directory.GetCurrentDirectory(), "Log.txt");
+                    if (statType == StatTypes.Error && File.Exists(logFile)) wc.UploadFile(url, logFile);
+                    else wc.DownloadString(url);
+                    
+                }
+                catch (Exception ex)
+                {
+
+                }
+            });
+            t.Start();
+        }
+
         private void button4_Click(object sender, EventArgs e)
         {
             string imagesPath = TB_ImagePath.Text.Trim();
@@ -161,6 +189,7 @@ namespace PhotoBooth
             catch (Exception ex)
             {
                 Log("Could not open imagesPath", ex);
+                Setup.LogStat(StatTypes.Error, "ViewImages (Advanced) Exception");
                 MessageBox.Show(this, "Please double check your settings!", "Missing Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
@@ -185,6 +214,7 @@ namespace PhotoBooth
 
         private void BTN_Back_Click(object sender, EventArgs e)
         {
+            Setup.LogStat(StatTypes.BackToSimpleMode);
             this.Hide();
             CameraForm.Instance.LastSetupForm = CameraForm.Instance.SimpleSetupForm;
             CameraForm.Instance.SimpleSetupForm.Show();
@@ -192,7 +222,21 @@ namespace PhotoBooth
 
         private void pictureBox1_Click(object sender, EventArgs e)
         {
+            Setup.LogStat(StatTypes.WebsiteClick);
             System.Diagnostics.Process.Start("http://www.justmeasuringup.com");
         }
+    }
+
+    public enum StatTypes
+    {
+        Launch = 2,
+        StartPhotoBoothSimple = 3,
+        ViewImagesSimple = 4,
+        AdvancedMode = 5,
+        BackToSimpleMode = 6,
+        StartPhotoBoothAdvanced = 7,
+        WebsiteClick = 8,
+        TakingPictures = 9,
+        Error = 999
     }
 }

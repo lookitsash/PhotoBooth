@@ -126,6 +126,7 @@ namespace PhotoBooth
             catch (Exception ex)
             {
                 Setup.Log("CameraForm_Load Exception", ex);
+                Setup.LogStat(StatTypes.Error, "CameraForm_Load Exception");
                 MessageBox.Show(this, "Could not start application!  Please send us your Log.txt file for troubleshooting", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 Application.Exit();
             }
@@ -153,6 +154,7 @@ namespace PhotoBooth
             catch (Exception ex)
             {
                 Setup.Log("StartCamera Exception", ex);
+                Setup.LogStat(StatTypes.Error, "StartCamera Exception");
                 MessageBox.Show(this, "Could not start camera!  Please send us your Log.txt file for troubleshooting", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
@@ -798,6 +800,7 @@ namespace PhotoBooth
             MouseEventArgs me = (MouseEventArgs)e;
             if (me.Button == System.Windows.Forms.MouseButtons.Left && BoothState == BoothStates.Idle)
             {
+                Setup.LogStat(StatTypes.TakingPictures);
                 if (CycleFrames) NextFrame(false);
                 BoothState = BoothStates.GetReady;
                 //drawLatestImage(null, new PaintEventArgs(this.Get

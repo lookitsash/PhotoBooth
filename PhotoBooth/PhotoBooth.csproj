@@ -172,6 +172,7 @@
     <Content Include="Properties\dshow.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\PhotoBoothStart.ico" />
     <None Include="Resources\Footer.jpg" />
     <None Include="Resources\Logo.jpg" />
     <None Include="Resources\FastTick.wav" />

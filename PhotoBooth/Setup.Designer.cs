@@ -265,7 +265,7 @@
             // pictureBox1
             // 
             this.pictureBox1.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureBox1.Image = global::PhotoBooth.Properties.Resources.Footer;
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
             this.pictureBox1.Location = new System.Drawing.Point(-8, 296);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(606, 103);
@@ -306,6 +306,7 @@
             this.Name = "Setup";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Easy Photo Booth - www.justmeasuringup.com";
+            this.TopMost = true;
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Setup_FormClosed);
             this.Load += new System.EventHandler(this.Setup_Load);
             ((System.ComponentModel.ISupportInitialize)(this.NUD_Rounds)).EndInit();
